@@ -2,13 +2,16 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 import connectDB from './config/db.js';
-import { clerkMiddleware } from '@clerk/express'
+import { clerkMiddleware, clerkClient } from '@clerk/express'
 import { serve } from "inngest/express";
 import { inngest, functions } from "./inngest/index.js"
 import showRouter from './routes/showRoutes.js';
 import bookingRouter from './routes/bookingRoute.js';
 import adminRouter from './routes/adminRoutes.js';
 import userRouter from './routes/userRoutes.js';
+
+// Make clerkClient globally available for debugging
+global.clerkClient = clerkClient;
 
 const app = express();
 const port=3000;

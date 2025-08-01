@@ -5,7 +5,14 @@ import Show from "../models/Show.js";
 
 // API to check if user is admin
 export const isAdmin = async (req, res) => {
-    res.json({success: true, isAdmin: true});
+    try {
+        // If the request reaches here, it means the user passed the protectAdmin middleware
+        // So they are definitely an admin
+        res.json({success: true, isAdmin: true});
+    } catch (error) {
+        console.error("Error in isAdmin:", error);
+        res.status(500).json({success: false, message: "Server error"});
+    }
 };
 
 // API to get dashboard data

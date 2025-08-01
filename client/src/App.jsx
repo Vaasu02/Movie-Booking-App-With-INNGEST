@@ -14,9 +14,13 @@ import AddShows from './pages/admin/AddShows'
 import ListShows from './pages/admin/ListShows'
 import Dashboard from './pages/admin/Dashboard'
 import Layout from './pages/admin/Layout'
-
+import { useAppContext } from './hooks/useAppContext'
+import { SignIn } from '@clerk/clerk-react'
 const App = () => {
   const isAdminRoute=useLocation().pathname.startsWith('/admin')
+
+  const{user, isAdmin}=useAppContext()
+  
   return (
     <>
       <Toaster />
@@ -28,7 +32,11 @@ const App = () => {
         <Route path="/movies/:id/:date" element={<SeatLayout />} />
         <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/favorite" element={<Favorite />} />
-        <Route path="/admin/*" element={<Layout />} >
+        <Route path="/admin/*" element={user && isAdmin ? <Layout />:(
+          <div className='min-h-screen flex justify-center items-center'>
+            <SignIn fallbackRedirectUrl={"/admin"}/>
+          </div>
+        )} >
           // This route sets the default (index) page for the /admin path to the Dashboard component.
           <Route index element={<Dashboard />} />
           <Route path="list-shows" element={<ListShows />} />
