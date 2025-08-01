@@ -1,6 +1,6 @@
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
-
+import User from "../models/User.js";
 
 
 // API to check if user is admin
@@ -19,8 +19,12 @@ export const isAdmin = async (req, res) => {
 export const getDashboardData = async (req, res) => {
     try {
         const bookings = await Booking.find({isPaid: true});
-        const activeShows = await Show.find({showDateTime: {$gte: new Date()}})
+        const allActiveShows = await Show.find({showDateTime: {$gte: new Date()}})
             .populate('movie');
+        
+        // Filter out shows with null/undefined movie data
+        const activeShows = allActiveShows.filter(show => show.movie);
+        
         const totalUser = await User.countDocuments();
         
         const dashboardData = {
@@ -30,7 +34,7 @@ export const getDashboardData = async (req, res) => {
             totalUser
         };
         
-        res.json({ success: true, dashboardData });
+        res.json({ success: true, data: dashboardData });
     } catch (error) {   
         console.error(error);
         res.status(500).json({ success: false, message: error.message });
@@ -41,7 +45,9 @@ export const getDashboardData = async (req, res) => {
 // API to get all shows
 export const getAllShows = async (req, res) => {
     try {
-        const shows = await Show.find({showDateTime: { $gte: new Date() }}).populate('movie').sort({ showDateTime: 1 });
+        const allShows = await Show.find({showDateTime: { $gte: new Date() }}).populate('movie').sort({ showDateTime: 1 });
+        // Filter out shows with null/undefined movie data
+        const shows = allShows.filter(show => show.movie);
         res.json({success: true, shows});
     } catch (error) {
         console.error(error);

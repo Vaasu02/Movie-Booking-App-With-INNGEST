@@ -4,12 +4,14 @@ import { assets } from "../assets/assets";
 import { MenuIcon, SearchIcon, XIcon } from "lucide-react";
 import { useClerk, useUser, UserButton } from "@clerk/clerk-react";
 import { TicketPlus } from "lucide-react";
+import { useAppContext } from "../hooks/useAppContext";
 
 const Navbar = () => {
     const[isOpen,setIsOpen]=useState(false);
     const{user}=useUser();
     const{openSignIn}=useClerk();
     const navigate=useNavigate();
+    const{favoriteMovies}=useAppContext();
 
   return (
     <div className="fixed top-0 left-0 z-50 w-full flex items-center justify-between px-6 md:px-16 lg:px-36 py-5">
@@ -30,7 +32,7 @@ border-gray-300/20 overflow-hidden transition-[width] duration-300 ${isOpen ? 'm
         <Link onClick={()=>{scrollTo(0,0); setIsOpen(false)}} to="/movies">Movies</Link>
         <Link onClick={()=>{scrollTo(0,0); setIsOpen(false)}} to="/">Theaters</Link>
         <Link onClick={()=>{scrollTo(0,0); setIsOpen(false)}} to="/">Releases</Link>
-        <Link onClick={()=>{scrollTo(0,0); setIsOpen(false)}} to="/favorite">Favorites</Link>
+        {favoriteMovies.length > 0 && <Link onClick={()=>{scrollTo(0,0); setIsOpen(false)}} to="/favorite">Favorites</Link>}
       </div>
 
       <div className='flex items-center gap-8'>

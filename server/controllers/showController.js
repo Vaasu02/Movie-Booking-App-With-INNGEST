@@ -93,11 +93,21 @@ export const addShow = async (req, res) => {
 //api to get all shows from the database
 export const getShows = async (req, res) => {
   try {
-    const shows = await Show.find({showDateTime: {$gte: new Date()}}).populate
-    ('movie').sort({ showDateTime: 1 });
-    // filter unique shows
-    const uniqueShows = new Set(shows.map(show => show.movie))
-    res.json({success: true, shows: Array.from(uniqueShows)})
+    const shows = await Show.find({showDateTime: {$gte: new Date()}}).populate('movie').sort({ showDateTime: 1 });
+    
+    // Filter out shows with null movies and get unique movies
+    const validShows = shows.filter(show => show.movie);
+    const uniqueMovies = [];
+    const movieIds = new Set();
+    
+    validShows.forEach(show => {
+      if (!movieIds.has(show.movie._id.toString())) {
+        movieIds.add(show.movie._id.toString());
+        uniqueMovies.push(show.movie);
+      }
+    });
+    
+    res.json({success: true, shows: uniqueMovies})
   } catch (error) {
     console.error(error);
     res.json({ success: false, message: error.message });
