@@ -9,6 +9,7 @@ import showRouter from './routes/showRoutes.js';
 import bookingRouter from './routes/bookingRoute.js';
 import adminRouter from './routes/adminRoutes.js';
 import userRouter from './routes/userRoutes.js';
+import { stripeWebhook } from './controllers/stripeWebhooks.js';
 
 // Make clerkClient globally available for debugging
 global.clerkClient = clerkClient;
@@ -17,6 +18,8 @@ const app = express();
 const port=3000;
 
 await connectDB();
+
+app.use('/api/stripe',express.raw({type:'application/json'}),stripeWebhook);
 
 
 app.use(express.json());
